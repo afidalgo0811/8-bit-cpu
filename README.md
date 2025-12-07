@@ -49,9 +49,9 @@ Components Checklist
 
 * [x] Register: 8-bit storage (A, B, IR, PC, OUT).
 
-* [ ] ALU: Arithmetic Logic Unit (Add/Subtract).
+* [x] ALU: Arithmetic Logic Unit (Add/Subtract).
 
-* [ ] RAM: 16-byte memory bank.
+* [x] RAM: 16-byte memory bank.
 
 * [ ] Bus: The communication pathway.
 
