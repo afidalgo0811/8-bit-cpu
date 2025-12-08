@@ -3,29 +3,22 @@ package com.cpu.sim
 fun main() {
     val cpu = Cpu()
     val display = Display()
+    val assembler = Assembler()
 
     println("--- 8-BIT CPU SIMULATOR ---")
     println("Initializing hardware...")
 
     // PROGRAM: Calculate 5 + 3
-    // ------------------------------------------------
-    // 0: LDI 5   (Load 5 into A)        -> 0x55
-    // 1: STA 15  (Store A to addr 15)   -> 0x4F
-    // 2: LDI 3   (Load 3 into A)        -> 0x53
-    // 3: ADD 15  (Add RAM[15] to A)     -> 0x2F
-    // 4: OUT     (Output A)             -> 0xE0
-    // 5: HLT     (Stop)                 -> 0xF0
-
-    val program =
-        intArrayOf(
-            0x55,
-            0x4F,
-            0x53,
-            0x2F,
-            0xE0,
-            0xF0,
-        )
-
+    // We can now write comments and use names!
+    val sourceCode = """
+        LDI 5    ; Load 5 into Register A
+        STA 15   ; Store it at address 15 (bottom of memory)
+        LDI 3    ; Load 3 into Register A
+        ADD 15   ; Add value at address 15 (which is 5)
+        OUT      ; Show the result (should be 8)
+        HLT      ; Stop the clock
+    """
+    val program = assembler.assemble(sourceCode)
     cpu.ram.loadProgram(program)
 
     println("Program loaded. Starting Clock...")
@@ -48,8 +41,8 @@ fun main() {
             break
         }
 
-        // Optional: Slow it down so you can watch it (100ms)
-        Thread.sleep(100)
+        // Optional: Slow it down, so you can watch it (100ms)
+        Thread.sleep(1000)
     }
 
     display.printState(stepCount, cpu) // Print final state
