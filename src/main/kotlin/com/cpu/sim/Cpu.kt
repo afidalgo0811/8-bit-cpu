@@ -10,7 +10,7 @@ package com.cpu.sim
 class Cpu {
     // --- Components ---
     val ram = Ram()
-    val alu = Alu()
+    private val alu = Alu()
 
     // General Purpose Registers
     val regA = Register("A")
@@ -20,6 +20,11 @@ class Cpu {
     val regIR = Register("IR") // Instruction Register (Stores the current command)
     val regPC = ProgramCounter() // Keeps track of where we are
     val regOut = Register("OUT") // The display
+
+    // --- FLAG REGISTERS ---
+    // These remember the status of the last math operation.
+    var flagZero = false
+    var flagCarry = false
 
     // --- State ---
     var halted = false
@@ -36,8 +41,8 @@ class Cpu {
         const val STA = 0x04 // Store Register A into RAM
         const val LDI = 0x05 // Load Immediate (Hardcoded value) into A
         const val JMP = 0x06 // Jump to Address
-        const val JC = 0x07 // Jump if Carry (Not implemented yet)
-        const val JZ = 0x08 // Jump if Zero (Not implemented yet)
+        const val JC = 0x07 // Jump if Carry
+        const val JZ = 0x08 // Jump if Zero
 
         const val OUT = 0x0E // Output Register A to the "Display"
         const val HLT = 0x0F // Halt the clock
@@ -75,6 +80,7 @@ class Cpu {
         when (opcode) {
             NOP -> { // Do nothing
             }
+
             LDA -> {
                 // Load RAM[operand] into A
                 val data = ram.read(operand)
@@ -87,7 +93,10 @@ class Cpu {
                 regB.load(data)
                 // 2. Add A + B -> A
                 val result = alu.add(regA.value, regB.value)
-                regA.load(result)
+
+                regA.load(result.value)
+                flagZero = result.zero
+                flagCarry = result.carry
             }
 
             SUB -> {
@@ -96,7 +105,9 @@ class Cpu {
                 regB.load(data)
                 // 2. Subtract A - B -> A
                 val result = alu.subtract(regA.value, regB.value)
-                regA.load(result)
+                regA.load(result.value)
+                flagZero = result.zero
+                flagCarry = result.carry
             }
 
             STA -> {
@@ -112,6 +123,20 @@ class Cpu {
             JMP -> {
                 // Set PC to operand
                 regPC.load(operand)
+            }
+
+            JC -> {
+                // Jump ONLY if the Carry Flag is on
+                if (flagCarry) {
+                    regPC.load(operand)
+                }
+            }
+
+            JZ -> {
+                // Jump ONLY if the Zero Flag is on
+                if (flagZero) {
+                    regPC.load(operand)
+                }
             }
 
             OUT -> {

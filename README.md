@@ -53,11 +53,11 @@ Components Checklist
 
 * [x] RAM: 16-byte memory bank.
 
-* [ ] Bus: The communication pathway.
+* [x] Bus: The communication pathway.
 
-* [ ] Control Unit: The logic that decodes instructions.
+* [x] Control Unit: The logic that decodes instructions.
 
-* [ ] Clock: The cycle stepper.
+* [x] Clock: The cycle stepper.
 
 Tech Stack
 
